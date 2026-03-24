@@ -49,9 +49,9 @@ int main(void)
         char timebuffer[9];
         strftime(timebuffer, sizeof(timebuffer), "%H:%M:%S", tm_info);
 
+        cz_slowprintf("%s >", timebuffer);
         cz_enable_echo();
         cz_show_cur();
-        cz_slowprintf("%s >", timebuffer);
 
         size_t len = 0;
         ssize_t read = getline(&line, &len, stdin);
