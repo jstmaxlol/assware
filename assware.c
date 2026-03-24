@@ -26,6 +26,7 @@ int main(void)
 
     prctl(PR_SET_PDEATHSIG, SIGHUP);
 
+    cz_hide_cur();
     cz_disable_echo();
     
     cz_slowprintf("%s", ANSI_CLEAR_SCREEN_AND_SCROLLBACK);
@@ -49,12 +50,14 @@ int main(void)
         strftime(timebuffer, sizeof(timebuffer), "%H:%M:%S", tm_info);
 
         cz_enable_echo();
+        cz_show_cur();
         cz_slowprintf("%s >", timebuffer);
 
         size_t len = 0;
         ssize_t read = getline(&line, &len, stdin);
 
         // input has been read
+        cz_hide_cur();
         cz_disable_echo();
 
         line[strcspn(line, "\r\n")] = '\0';
@@ -88,6 +91,7 @@ int main(void)
     free(line);
     line = NULL;
     cz_enable_echo();
+    cz_show_cur();
     return 0;
 }
 
