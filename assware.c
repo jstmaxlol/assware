@@ -9,6 +9,7 @@
 #include <linux/prctl.h>
 #include <sys/prctl.h>
 
+#define CZEXT_IMPLEMENTATION
 #include <czext.h>
 
 void NoThanksFuckYou(int sig);
@@ -24,6 +25,8 @@ int main(void)
     signal(SIGHUP, NoThanksFuckYou);
 
     prctl(PR_SET_PDEATHSIG, SIGHUP);
+
+    cz_disable_echo();
     
     cz_slowprintf("%s", ANSI_CLEAR_SCREEN_AND_SCROLLBACK);
     cz_slowprintf(
@@ -45,10 +48,14 @@ int main(void)
         char timebuffer[9];
         strftime(timebuffer, sizeof(timebuffer), "%H:%M:%S", tm_info);
 
+        cz_enable_echo();
         cz_slowprintf("%s >", timebuffer);
 
         size_t len = 0;
         ssize_t read = getline(&line, &len, stdin);
+
+        // input has been read
+        cz_disable_echo();
 
         line[strcspn(line, "\r\n")] = '\0';
 
@@ -77,8 +84,10 @@ int main(void)
             failed_attempts++;
     }
 
+    // cleanup
     free(line);
     line = NULL;
+    cz_enable_echo();
     return 0;
 }
 
